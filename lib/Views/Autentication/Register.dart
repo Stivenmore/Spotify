@@ -4,7 +4,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'package:spotify/Domain/Provider/AutenticateProvider.dart';
+import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 import 'package:spotify/Views/Utils/Validations/StreamValidation.dart';
 
