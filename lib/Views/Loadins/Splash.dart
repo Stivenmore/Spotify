@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spotify/Domain/Provider/AutenticateProvider.dart';
+import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 
 class Splash extends StatefulWidget {

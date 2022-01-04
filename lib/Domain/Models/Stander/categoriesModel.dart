@@ -16,7 +16,7 @@ class CategoriesModel {
 
     return CategoriesModel(
         href: map['href'] as String? ?? '',
-        id: map['value'] as String? ?? '',
+        id: map['id'] as String? ?? '',
         name: map["name"] as String? ?? '',
         iconlist: list.isNotEmpty
             ? list.map((e) => IconModel.fromJson(e)).toList()
