@@ -2,7 +2,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:spotify/Domain/Provider/AutenticateProvider.dart';
+import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
+import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
+import 'package:spotify/Views/General/General.dart';
+import 'package:spotify/Views/Home/Home.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 
 class Splash extends StatefulWidget {
@@ -20,11 +23,17 @@ class _SplashState extends State<Splash> {
   }
 
   validate(BuildContext context) async {
+    final spotifybloc = Provider.of<SpotifyProvider>(context, listen: false);
+    await spotifybloc.getCategoria();
+    spotifybloc.clearerror();
     Future.delayed(const Duration(seconds: 5), () {
       AutenticateProvider provider =
           Provider.of<AutenticateProvider>(context, listen: false);
       if (provider.user != null) {
-        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(builder: (context) => const General()),
+            (route) => false);
       } else {
         Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
       }

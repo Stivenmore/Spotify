@@ -5,13 +5,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
-import 'package:spotify/Domain/Provider/AutenticateProvider.dart';
+import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
+import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
+import 'package:spotify/Views/General/General.dart';
 import 'package:spotify/Views/Home/Home.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 import 'package:spotify/Views/Utils/Validations/StreamValidation.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  final String? message;
+  const Login({Key? key, this.message}) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
@@ -25,10 +28,21 @@ class _LoginState extends State<Login> {
   final validate = LoginValidate();
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
+  @override
+  void initState() {
+    if (widget.message != null && widget.message != '') {
+      ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+        content: Text('Error ${widget.message}'),
+        actions: [],
+      ));
+    } else {}
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AutenticateProvider>(context);
+    final autenticatebloc = Provider.of<AutenticateProvider>(context);
+    final spotifybloc = Provider.of<SpotifyProvider>(context);
     Responsive responsive = Responsive(context);
     return SafeArea(
       child: Scaffold(
@@ -41,9 +55,10 @@ class _LoginState extends State<Login> {
           height: responsive.height,
           width: responsive.width,
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(20.0),
             child: SingleChildScrollView(
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
                     child: isloading == true
@@ -59,40 +74,22 @@ class _LoginState extends State<Login> {
                     height: 20,
                   ),
                   Text(
-                    'Hola!',
+                    ' Hola!',
                     style: TextStyle(
                         color: Colors.purple,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w700),
+                        fontSize: 58,
+                        fontWeight: FontWeight.w800),
+                    textAlign: TextAlign.left,
                   ),
                   SizedBox(
                     height: 20,
-                  ),
-                  Text(
-                    'Bienvenido a tu app de musica preferida',
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500),
-                    textAlign: TextAlign.center,
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    'Vive a tu ritmo, vive a tu musica.',
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400),
-                    textAlign: TextAlign.center,
                   ),
                   SizedBox(
                     height: 20,
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 20),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 20),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
@@ -130,7 +127,7 @@ class _LoginState extends State<Login> {
                   ),
                   Padding(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(16),
@@ -185,82 +182,95 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   const SizedBox(height: 60),
-                  SizedBox(
-                    width: responsive.wp(80),
-                    child: StreamBuilder(
-                        stream: validate.formValidStream,
-                        builder: (context, snapshot) {
-                          return RoundedLoadingButton(
-                            height: 60,
-                            borderRadius: 12,
-                            controller: controller,
-                            color: Color(0xff3F3959),
-                            successColor: Color(0xffFAB770),
-                            onPressed: () async {
-                              if (snapshot.hasData) {
-                                setState(() {
-                                  isloading = true;
-                                });
-                                final resp = await provider.emailAndPassSign(
-                                    email: controller1.text,
-                                    password: controller2.text);
-                                setState(() {
-                                  isloading = false;
-                                });
-                                if (resp['success']) {
-                                  Timer(Duration(milliseconds: 700), () {
-                                    controller.success();
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30),
+                    child: SizedBox(
+                      width: responsive.wp(80),
+                      child: StreamBuilder(
+                          stream: validate.formValidStream,
+                          builder: (context, snapshot) {
+                            return RoundedLoadingButton(
+                              height: 60,
+                              borderRadius: 12,
+                              controller: controller,
+                              color: Color(0xff3F3959),
+                              successColor: Color(0xffFAB770),
+                              onPressed: () async {
+                                if (snapshot.hasData) {
+                                  setState(() {
+                                    isloading = true;
                                   });
-                                  Timer(Duration(milliseconds: 1200), () {
-                                    controller.reset();
+                                  final resp =
+                                      await autenticatebloc.emailAndPassSign(
+                                          email: controller1.text,
+                                          password: controller2.text);
+                                  final resp2 =
+                                      await spotifybloc.getCategoria();
+                                  setState(() {
+                                    isloading = false;
                                   });
-                                  Navigator.pushNamedAndRemoveUntil(
-                                      context, '/home', (route) => false);
+                                  if (resp['success']) {
+                                    Timer(Duration(milliseconds: 700), () {
+                                      controller.success();
+                                    });
+                                    Timer(Duration(milliseconds: 1200), () {
+                                      controller.reset();
+                                    });
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => General()),
+                                        (route) => false);
+                                  } else {
+                                    Timer(Duration(milliseconds: 700), () {
+                                      controller.error();
+                                      if (resp["message"] != "") {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content:
+                                                    Text(resp["message"])));
+                                      }
+                                    });
+                                    Timer(Duration(milliseconds: 1900), () {
+                                      controller.reset();
+                                    });
+                                  }
                                 } else {
                                   Timer(Duration(milliseconds: 700), () {
                                     controller.error();
-                                    if (resp["message"] != "") {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(resp["message"])));
-                                    }
                                   });
                                   Timer(Duration(milliseconds: 1900), () {
                                     controller.reset();
                                   });
                                 }
-                              } else {
-                                Timer(Duration(milliseconds: 700), () {
-                                  controller.error();
-                                });
-                                Timer(Duration(milliseconds: 1900), () {
-                                  controller.reset();
-                                });
-                              }
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(18),
-                              ),
-                              height: 60,
-                              child: Center(
-                                child: Text(
-                                  'Iniciar Sesíon',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
+                              },
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(18),
+                                ),
+                                height: 60,
+                                child: Center(
+                                  child: Text(
+                                    'Iniciar Sesíon',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        }),
+                            );
+                          }),
+                    ),
                   ),
                   const SizedBox(
                     height: 20,
                   ),
-                  Text('------ O continua con ------'),
+                  Text(
+                    '------ O continua con ------',
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(
                     height: 40,
                   ),
@@ -275,13 +285,17 @@ class _LoginState extends State<Login> {
                             setState(() {
                               isloading = true;
                             });
-                            final resp = await provider.googleSign();
+                            final resp = await autenticatebloc.googleSign();
+                            final resp2 = await spotifybloc.getCategoria();
                             setState(() {
                               isloading = false;
                             });
-                            if (resp["success"]) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/home', (route) => false);
+                            if (resp["success"] && resp2 == true) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => General()),
+                                  (route) => false);
                             } else {
                               if (resp["message"] != "") {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -309,13 +323,17 @@ class _LoginState extends State<Login> {
                             setState(() {
                               isloading = true;
                             });
-                            final resp = await provider.facebookSign();
+                            final resp = await autenticatebloc.facebookSign();
+                            final resp2 = await spotifybloc.getCategoria();
                             setState(() {
                               isloading = false;
                             });
-                            if (resp["success"]) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/home', (route) => false);
+                            if (resp["success"] && resp2 == true) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => General()),
+                                  (route) => false);
                             } else {
                               if (resp["message"] != "") {
                                 ScaffoldMessenger.of(context).showSnackBar(

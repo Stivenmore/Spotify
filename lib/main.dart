@@ -5,9 +5,9 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:spotify/Domain/Models/Hive/UserModel.dart';
-import 'package:spotify/Domain/Provider/AutenticateProvider.dart';
+import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Dependency/injection.dart';
-import 'package:spotify/Domain/Provider/SpotifyProvider.dart';
+import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
 import 'package:spotify/Domain/Shared/prefs.dart';
 import 'package:spotify/Domain/services/push_notifications_service.dart';
 import 'package:spotify/Views/Utils/routes.dart';
@@ -68,7 +68,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     PushNotificationService.messagesStream.listen((event) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(event)));
