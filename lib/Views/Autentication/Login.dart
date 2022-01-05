@@ -7,11 +7,14 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
+import 'package:spotify/Views/General/General.dart';
+import 'package:spotify/Views/Home/Home.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 import 'package:spotify/Views/Utils/Validations/StreamValidation.dart';
 
 class Login extends StatefulWidget {
-  const Login({Key? key}) : super(key: key);
+  final String? message;
+  const Login({Key? key, this.message}) : super(key: key);
 
   @override
   _LoginState createState() => _LoginState();
@@ -25,6 +28,16 @@ class _LoginState extends State<Login> {
   final validate = LoginValidate();
   TextEditingController controller1 = TextEditingController();
   TextEditingController controller2 = TextEditingController();
+  @override
+  void initState() {
+    if (widget.message != null && widget.message != '') {
+      ScaffoldMessenger.of(context).showMaterialBanner(MaterialBanner(
+        content: Text('Error ${widget.message}'),
+        actions: [],
+      ));
+    } else {}
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,8 +216,11 @@ class _LoginState extends State<Login> {
                                     Timer(Duration(milliseconds: 1200), () {
                                       controller.reset();
                                     });
-                                    Navigator.pushNamedAndRemoveUntil(
-                                        context, '/home', (route) => false);
+                                    Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => General()),
+                                        (route) => false);
                                   } else {
                                     Timer(Duration(milliseconds: 700), () {
                                       controller.error();
@@ -275,8 +291,8 @@ class _LoginState extends State<Login> {
                               isloading = false;
                             });
                             if (resp["success"]) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/home', (route) => false);
+                              MaterialPageRoute(
+                                  builder: (context) => General());
                             } else {
                               if (resp["message"] != "") {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -309,9 +325,9 @@ class _LoginState extends State<Login> {
                             setState(() {
                               isloading = false;
                             });
-                            if (resp["success"]) {
-                              Navigator.pushNamedAndRemoveUntil(
-                                  context, '/home', (route) => false);
+                            if (resp["success"] && resp2 == true) {
+                              MaterialPageRoute(
+                                  builder: (context) => General());
                             } else {
                               if (resp["message"] != "") {
                                 ScaffoldMessenger.of(context).showSnackBar(
