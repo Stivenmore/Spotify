@@ -68,7 +68,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-      PushNotificationService.messagesStream.listen((event) {
+    PushNotificationService.messagesStream.listen((event) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(event)));
     });
