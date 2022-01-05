@@ -290,9 +290,12 @@ class _LoginState extends State<Login> {
                             setState(() {
                               isloading = false;
                             });
-                            if (resp["success"]) {
-                              MaterialPageRoute(
-                                  builder: (context) => General());
+                            if (resp["success"] && resp2 == true) {
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => General()),
+                                  (route) => false);
                             } else {
                               if (resp["message"] != "") {
                                 ScaffoldMessenger.of(context).showSnackBar(
@@ -326,8 +329,11 @@ class _LoginState extends State<Login> {
                               isloading = false;
                             });
                             if (resp["success"] && resp2 == true) {
-                              MaterialPageRoute(
-                                  builder: (context) => General());
+                              Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => General()),
+                                  (route) => false);
                             } else {
                               if (resp["message"] != "") {
                                 ScaffoldMessenger.of(context).showSnackBar(

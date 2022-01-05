@@ -136,4 +136,35 @@ class SpotifyRepository implements AbstractProvider {
       print(e);
     }
   }
+
+  @override
+  Future getallTracks({
+    required String playlistID,
+    required int offset,
+  }) async {
+    try {
+      final tokenizate = await tokenizacion();
+      if (tokenizate == true) {
+        int limit = 15;
+        final resp = await http.get(
+          Uri.parse(
+              '$urlbasic/playlists/$playlistID/tracks?&limit=$limit&offset=$offset'),
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${_prefs.oatoken}",
+          },
+        );
+        if (resp.statusCode == 200) {
+          return json.decode(resp.body);
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
 }

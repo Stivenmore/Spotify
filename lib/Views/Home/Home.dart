@@ -35,15 +35,6 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final spotifybloc = Provider.of<SpotifyProvider>(context, listen: true);
-    if (spotifybloc.errornumbers > 3) {
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => const Login(
-                    message: 'de Conexion',
-                  )),
-          (route) => false);
-    }
     final boxkeylast = box.keys.last;
     final user = box.get(boxkeylast) as UserModel;
     Responsive responsive = Responsive(context);
