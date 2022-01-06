@@ -33,7 +33,8 @@ Utilizados para registrar dependencias e hacer inyeccion de estas, a traves de l
 
 se implementaron animaciones teniendo como principio Transform, Transition, AnimanionSize, Animations Opacity y demas widget nativos del Frameword.
 
-##Firebase
+## Firebase
+
 Se usa este servicio de google en la nube para login con Google, Facebook y correo mas contraseña, registro de igual modo.
 
 #SPOTIFY APP
