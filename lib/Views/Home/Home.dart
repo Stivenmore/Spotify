@@ -12,6 +12,7 @@ import 'package:spotify/Views/Autentication/Login.dart';
 import 'package:spotify/Views/Home/Details/DetailsArtists.dart';
 import 'package:spotify/Views/Home/Details/DetailsCategoria.dart';
 import 'package:spotify/Views/Home/Details/DetailsPlayList.dart';
+import 'package:spotify/Views/Search/Search.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 
 class Home extends StatefulWidget {
@@ -80,6 +81,13 @@ class _HomeState extends State<Home> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
+                    actions: [
+                      IconButton(
+                        icon: Icon(Icons.search_outlined),
+                        onPressed: () => showSearch(
+                            context: context, delegate: SearchCourseDelegate()),
+                      ),
+                    ],
                   ),
                   SliverToBoxAdapter(
                     child: IgnorePointer(

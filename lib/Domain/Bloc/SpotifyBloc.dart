@@ -6,9 +6,11 @@ import 'package:spotify/Domain/Models/Stander/albumModel.dart';
 import 'package:spotify/Domain/Models/Stander/artistModel.dart';
 import 'package:spotify/Domain/Models/Stander/categoriesModel.dart';
 import 'package:spotify/Domain/Models/Stander/playlistModel.dart';
+import 'package:spotify/Domain/Models/Stander/searchModelTrack.dart';
 import 'package:spotify/Domain/Models/Stander/trackArtistModel.dart';
 import 'package:spotify/Domain/Models/Stander/tracksModel.dart';
 import 'package:spotify/Domain/Shared/prefs.dart';
+import 'package:spotify/Views/Components/deboucer.dart';
 
 class SpotifyProvider with ChangeNotifier {
   final AbstractProvider abstractProvider;
@@ -19,6 +21,10 @@ class SpotifyProvider with ChangeNotifier {
     getRecomendationAlbums();
     getRecomendationPlays();
   }
+  final StreamController<List<SearchModelTrack>> _suggestionStreamContoller =
+      StreamController.broadcast();
+  Stream<List<SearchModelTrack>> get suggestionStream =>
+      _suggestionStreamContoller.stream;
 
   ///
   bool globalstate = false;
@@ -41,9 +47,10 @@ class SpotifyProvider with ChangeNotifier {
   int offsetOptPlayReco = 0;
   List<TrackModel> trackListOptModel = [];
   int offsetOptTrack = 0;
+  List<SearchModelTrack> model = [];
 
   ///
-
+  final debouncer = Debouncer(duration: Duration(milliseconds: 500));
   //Funtions
   void funcionprogress() {
     globalstate = true;
@@ -271,5 +278,41 @@ class SpotifyProvider with ChangeNotifier {
       }
       return null;
     }
+  }
+
+  Future getSearchTracks({required String q}) async {
+    try {
+      final resp = await abstractProvider.getSearchTracks(q: q, offset: 0);
+      if (resp != null && resp["tracks"]["items"] != null) {
+        model = (resp["tracks"]["items"] as Iterable)
+            .map((e) => SearchModelTrack.fromJson(e))
+            .toList();
+        notifyListeners();
+        return model;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      pluserror();
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  void getStreamSearch(String searT) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      // print('Tenemos valor a buscar: $value');
+      final results = await getSearchTracks(q: value);
+      this._suggestionStreamContoller.add(results);
+    };
+
+    final timer = Timer.periodic(Duration(milliseconds: 300), (_) {
+      debouncer.value = searT;
+    });
+
+    Future.delayed(Duration(milliseconds: 301)).then((_) => timer.cancel());
   }
 }
