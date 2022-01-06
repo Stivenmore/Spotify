@@ -36,7 +36,98 @@ class SearchCourseDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Text('buildResults');
+    final spotifybloc = Provider.of<SpotifyProvider>(context, listen: false);
+    Responsive responsive = Responsive(context);
+    if (query.isEmpty) {
+      return _emptyContainer();
+    }
+    spotifybloc.getStreamSearch(query);
+
+    return StreamBuilder(
+        stream: spotifybloc.suggestionStream,
+        builder: (context, AsyncSnapshot<List<SearchModelTrack>?> snap) {
+          if (snap.hasData) {
+            return Container(
+              height: responsive.height - 90,
+              child: ListView.builder(
+                  itemCount: snap.data!.length,
+                  itemBuilder: (_, index) {
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => DetailTrack(
+                                      playlist: '',
+                                      trackModel: TrackModel(
+                                          artists: snap.data![index].artists,
+                                          images: snap.data![index].images,
+                                          name: snap.data![index].name,
+                                          href: snap.data![index].href,
+                                          id: snap.data![index].id,
+                                          previusURl:
+                                              snap.data![index].previusURl),
+                                    )));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(14.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: 70,
+                              width: 70,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: FadeInImage.assetNetwork(
+                                  placeholder: 'assets/no-image.jpg',
+                                  image: snap.data![index].images![0].url!,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  Container(
+                                    width: responsive.wp(60),
+                                    child: Text(
+                                      snap.data![index].name!,
+                                      textAlign: TextAlign.left,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10,
+                                  ),
+                                  Container(
+                                    width: responsive.wp(60),
+                                    child: Text(
+                                      snap.data![index].artists![0].name!,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }),
+            );
+          } else if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          } else {
+            return const Center(
+              child: Text('No tengo data'),
+            );
+          }
+        });
   }
 
   Widget _emptyContainer() {
