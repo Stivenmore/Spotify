@@ -59,3 +59,5 @@ se implementaron animaciones teniendo como principio Transform, Transition, Anim
 
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/3.jpeg?alt=media&token=d288799b-d526-4abd-8b52-52c845efc5f4" width="250"> |
 
+#Flutter
+Escojo flutter como Framework para trabajar, dada su fácil integración, velocidad de compilación y rápido aprendizaje, la forma de programar en este permite que los devs puedan entender y simplificar muchas cosas que en otros Framework y lenguaje será más complejo, el solo hecho de controlar estados de forma global es un ejemplo de esto, la calidad de los apps desarrolladas en este se sienten como nativas, dado que uno de los PROS de flutter es su compilación a nativo, su core como lenguaje (dart), esta muy bien estructurado, realmente considero que Flutter y Dart tienen mucho por entregar por ello en el tiempo que ya tienen cada vez logramos ver mejores ofertas y más evolución en el Framework, ya tenemos soporte mínimo para web y desktop, y una de las promesas de Google es poder incluirlo en TV, y vehículos.
