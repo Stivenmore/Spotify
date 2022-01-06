@@ -33,5 +33,5 @@ Utilizados para registrar dependencias e hacer inyeccion de estas, a traves de l
 
 se implementaron animaciones teniendo como principio Transform, Transition, AnimanionSize, Animations Opacity y demas widget nativos del Frameword.
 
-#Muestras de la app
-![Screenshot](1.png)
+# Muestras de la app
+![Screenshot](1.jpeg)
