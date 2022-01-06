@@ -35,29 +35,27 @@ se implementaron animaciones teniendo como principio Transform, Transition, Anim
 
 #SPOTIFY APP
 
- | [SCREEN 1]     | 
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/7.jpeg?alt=media&token=c37b3308-9263-47a9-a426-f12d2c79e142" width="250"> |
  
- | [SCREEN 2]     | 
+
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/8.jpeg?alt=media&token=e698dd94-7903-4bd7-8f52-67b8e469562b" width="250"> |
-|------------|-------------| 
-|  [SCREEN 3]     | 
+
+
 |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/5.jpeg?alt=media&token=6ffa2606-9144-44c9-a47e-4050b363e451" width="250"> |
 
- | [SCREEN 4]     | 
+
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/1.jpeg?alt=media&token=77922232-8449-4794-96e0-7849c01d2cad" width="250"> |
  
-|------------|-------------| 
-|  [SCREEN 5]     | 
+
 |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/2.jpeg?alt=media&token=4deb147c-bd73-424d-af63-1711d4ae0a01" width="250"> |
 
- | [SCREEN 6]     | 
+
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/4.jpeg?alt=media&token=ca6cd30a-c2cc-4483-ad4a-0723d8c01597" width="250"> |
  
-|------------|-------------| 
-|  [SCREEN 7]     | 
+
+
 |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/6.jpeg?alt=media&token=48073908-94fe-4780-863b-4e974bbeac61" width="250"> |
 
- | [SCREEN 8]     | 
+
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/3.jpeg?alt=media&token=d288799b-d526-4abd-8b52-52c845efc5f4" width="250"> |
-|------------|-------------| 
+
