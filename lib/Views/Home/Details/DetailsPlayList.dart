@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
 import 'package:spotify/Domain/Models/Stander/playlistModel.dart';
 import 'package:spotify/Domain/Models/Stander/tracksModel.dart';
+import 'package:spotify/Views/Home/Details/DetailTrack.dart';
 import 'package:spotify/Views/Utils/Animations/FadeAnimation.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 
@@ -125,7 +126,15 @@ class _DetailsPlayListState extends State<DetailsPlayList> {
                       itemCount: list.length,
                       itemBuilder: (context, index) {
                         return GestureDetector(
-                          onTap: () async {},
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => DetailTrack(
+                                          playlist: widget.playlistModel!.name,
+                                          trackModel: list[index],
+                                        )));
+                          },
                           child: FadeAnimation(
                             (1500 + (index * 5)),
                             Padding(

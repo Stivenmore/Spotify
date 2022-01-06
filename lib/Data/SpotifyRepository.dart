@@ -12,6 +12,7 @@ import 'package:spotify/Views/Utils/Global/keys.dart';
 @injectable
 class SpotifyRepository implements AbstractProvider {
   final _prefs = UserPreferences();
+  int limit = 18;
 
   @override
   Future tokenizacion() async {
@@ -55,7 +56,6 @@ class SpotifyRepository implements AbstractProvider {
       required String country,
       required int offset}) async {
     try {
-      int limit = 18;
       final tokenizate = await tokenizacion();
       if (tokenizate == true) {
         final resp = await http.get(
@@ -114,7 +114,6 @@ class SpotifyRepository implements AbstractProvider {
     try {
       final tokenizate = await tokenizacion();
       if (tokenizate == true) {
-        int limit = 18;
         final resp = await http.get(
           Uri.parse(
               '$urlbasic/browse/categories/$categoryID/playlists/?country=$country&limit=$limit&offset=$offset'),
@@ -145,10 +144,35 @@ class SpotifyRepository implements AbstractProvider {
     try {
       final tokenizate = await tokenizacion();
       if (tokenizate == true) {
-        int limit = 15;
         final resp = await http.get(
           Uri.parse(
               '$urlbasic/playlists/$playlistID/tracks?&limit=$limit&offset=$offset'),
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${_prefs.oatoken}",
+          },
+        );
+        if (resp.statusCode == 200) {
+          return json.decode(resp.body);
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Future getSingleTrack({required String id}) async {
+    try {
+      final tokenizate = await tokenizacion();
+      if (tokenizate == true) {
+        final resp = await http.get(
+          Uri.parse('$urlbasic/tracks/$id'),
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
