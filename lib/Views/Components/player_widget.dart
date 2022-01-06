@@ -24,6 +24,7 @@ class PlayerWidget extends StatefulWidget {
 class _PlayerWidgetState extends State<PlayerWidget> {
   final String? url;
   AudioPlayer? audioPlayer;
+  bool ignored = false;
 
   Duration? _duration;
   Duration? _position;
@@ -129,34 +130,44 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                     transform: GradientRotation(0.7853982)),
                 borderRadius: BorderRadius.circular(48)),
             child: Center(
-              child: IconButton(
-                  onPressed: () async {
-                    if (_playerState == PlayerState.PLAYING) {
-                      audioPlayer!.pause().whenComplete(() {});
-                    } else {
-                      if (_duration != null) {
-                        if (_playerState == PlayerState.PAUSED) {
-                          await audioPlayer!.resume();
+              child: IgnorePointer(
+                ignoring: ignored,
+                child: IconButton(
+                    onPressed: () async {
+                      if (_playerState == PlayerState.PLAYING) {
+                        audioPlayer!.pause().whenComplete(() {});
+                      } else {
+                        if (_duration != null) {
+                          if (_playerState == PlayerState.PAUSED) {
+                            await audioPlayer!.resume();
+                          } else {
+                            setState(() {
+                              ignored = true;
+                            });
+                            await audioPlayer!
+                                .play(
+                              url!,
+                            ).whenComplete(() {
+                              setState(() {
+                                ignored = false;
+                              });
+                            });
+                          }
                         } else {
                           await audioPlayer!.play(
                             url!,
                           );
                         }
-                      } else {
-                        Result resp = await audioPlayer!.play(
-                          url!,
-                        );
-                        if (resp == Result.SUCCESS) {}
                       }
-                    }
-                  },
-                  iconSize: 26.0,
-                  icon: _playerState == PlayerState.RELEASED
-                      ? const Icon(Icons.play_arrow)
-                      : _playerState == PlayerState.PLAYING
-                          ? const Icon(Icons.pause)
-                          : const Icon(Icons.play_arrow),
-                  color: Colors.white),
+                    },
+                    iconSize: 26.0,
+                    icon: _playerState == PlayerState.RELEASED
+                        ? const Icon(Icons.play_arrow)
+                        : _playerState == PlayerState.PLAYING
+                            ? const Icon(Icons.pause)
+                            : const Icon(Icons.play_arrow),
+                    color: Colors.white),
+              ),
             ),
           )
         ],

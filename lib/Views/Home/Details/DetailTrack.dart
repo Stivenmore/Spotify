@@ -24,13 +24,15 @@ class _DetailTrackState extends State<DetailTrack> {
     super.initState();
   }
 
-  List<TrackModel> list = [];
+  @override
+  void dispose() {
+    audioPlayer.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final spotifybloc = Provider.of<SpotifyProvider>(context, listen: true);
-    setState(() {
-      list = spotifybloc.trackListOptModel;
-    });
+    final spotifybloc = Provider.of<SpotifyProvider>(context, listen: false);
     Responsive responsive = Responsive(context);
     return Scaffold(
       appBar: AppBar(
