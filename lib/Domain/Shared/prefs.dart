@@ -20,14 +20,14 @@ class UserPreferences {
     _prefs!.remove('token');
   }
 
-  // set to token app and save
-  set token(String value) {
-    _prefs!.setString('token', value);
+  // set to locale app and save
+  set locale(String value) {
+    _prefs!.setString('locale', value);
   }
 
   // get token
-  String get token {
-    return _prefs!.getString('token') ?? '';
+  String get locale {
+    return _prefs!.getString('locale') ?? 'AU';
   }
 
   //set expire token duration seconds
@@ -38,14 +38,6 @@ class UserPreferences {
   // get expire token
   int get expirestoken {
     return _prefs!.getInt('expirestoken') ?? 0;
-  }
-
-  set primary(bool value) {
-    _prefs!.setBool('primary', value);
-  }
-
-  bool get primary {
-    return _prefs!.getBool('primary') ?? true;
   }
 
   set oatoken(String value) {

@@ -17,8 +17,8 @@ class SpotifyRepository implements AbstractProvider {
   @override
   Future tokenizacion() async {
     try {
-      if (_prefs.token == '' && _prefs.expirestoken != DateTime.now().hour ||
-          _prefs.token.isNotEmpty &&
+      if (_prefs.oatoken == '' && _prefs.expirestoken != DateTime.now().hour ||
+          _prefs.oatoken.isNotEmpty &&
               _prefs.expirestoken != DateTime.now().hour) {
         print(DateTime.now().hour);
         var credentials = "$client_id:$client_secret";
@@ -173,6 +173,58 @@ class SpotifyRepository implements AbstractProvider {
       if (tokenizate == true) {
         final resp = await http.get(
           Uri.parse('$urlbasic/tracks/$id'),
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${_prefs.oatoken}",
+          },
+        );
+        if (resp.statusCode == 200) {
+          return json.decode(resp.body);
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Future getSingleArtist({required String id}) async {
+    try {
+      final tokenizate = await tokenizacion();
+      if (tokenizate == true) {
+        final resp = await http.get(
+          Uri.parse('$urlbasic/artists/$id'),
+          headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+            "Authorization": "Bearer ${_prefs.oatoken}",
+          },
+        );
+        if (resp.statusCode == 200) {
+          return json.decode(resp.body);
+        } else {
+          return null;
+        }
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  Future getTopTracksArtist({required String id}) async {
+    try {
+      final tokenizate = await tokenizacion();
+      if (tokenizate == true) {
+        final resp = await http.get(
+          Uri.parse('$urlbasic/artists/$id/top-tracks?market=ES'),
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",

@@ -27,8 +27,8 @@ class _SplashState extends State<Splash> {
     await spotifybloc.getCategoria();
     spotifybloc.clearerror();
     Future.delayed(const Duration(seconds: 5), () {
-      AutenticateProvider provider =
-          Provider.of<AutenticateProvider>(context, listen: false);
+      AuntenticateBloc provider =
+          Provider.of<AuntenticateBloc>(context, listen: false);
       if (provider.user != null) {
         Navigator.pushAndRemoveUntil(
             context,
@@ -42,8 +42,8 @@ class _SplashState extends State<Splash> {
 
   @override
   Widget build(BuildContext context) {
-    AutenticateProvider provider =
-        Provider.of<AutenticateProvider>(context, listen: false);
+    AuntenticateBloc provider =
+        Provider.of<AuntenticateBloc>(context, listen: false);
     Responsive responsive = Responsive(context);
     return Scaffold(
       backgroundColor: const Color(0xff313249),

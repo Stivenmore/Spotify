@@ -2,11 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:spotify/Domain/Logic/Autenticate/AbstratAutenticate.dart';
 
-class AutenticateProvider with ChangeNotifier {
+class AuntenticateBloc with ChangeNotifier {
   final AbstractAutenticate abstractAutenticate;
   User? get user => FirebaseAuth.instance.currentUser;
 
-  AutenticateProvider(this.abstractAutenticate);
+  AuntenticateBloc(this.abstractAutenticate);
 
   Future googleSign() async {
     final resp = await abstractAutenticate.googleSign();

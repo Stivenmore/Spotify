@@ -26,7 +26,7 @@ class _RegisterState extends State<Register> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<AutenticateProvider>(context);
+    final provider = Provider.of<AuntenticateBloc>(context);
     Responsive responsive = Responsive(context);
     return Scaffold(
       backgroundColor: Colors.white,

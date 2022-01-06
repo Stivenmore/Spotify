@@ -48,7 +48,7 @@ class ArtisModel {
 
   factory ArtisModel.fromJson(Map<String, dynamic> map) {
     return ArtisModel(
-      urlSpotify: map["external_urls"]["spotify"],
+      urlSpotify: map["external_urls"]["spotify"] as String? ?? '',
       href: map['href'] as String? ?? '',
       id: map['id'] as String? ?? '',
       name: map["name"] as String? ?? '',

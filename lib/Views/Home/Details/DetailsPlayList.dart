@@ -189,13 +189,13 @@ class _DetailsPlayListState extends State<DetailsPlayList> {
                                       ),
                                     ),
                                     Expanded(
-                                      child: IconButton(
-                                        onPressed: () {},
-                                        icon: Icon(
+                                      child: Align(
+                                        alignment: Alignment.centerRight,
+                                        child: Icon(
                                           Icons.star,
                                           color: Colors.amber[400],
+                                          size: 34,
                                         ),
-                                        alignment: Alignment.centerRight,
                                       ),
                                     )
                                   ],
