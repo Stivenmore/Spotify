@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_exoplayer/audioplayer.dart';
+import 'package:spotify/Domain/Models/Stander/artistModel.dart';
+import 'package:spotify/Domain/Models/Stander/trackArtistModel.dart';
 import 'package:spotify/Domain/Models/Stander/tracksModel.dart';
 import 'package:provider/provider.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
 import 'package:spotify/Views/Components/player_widget.dart';
+import 'package:spotify/Views/Home/Details/DetailsArtists.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 
 class DetailTrack extends StatefulWidget {
   final String? playlist;
   final TrackModel? trackModel;
-  const DetailTrack({Key? key, this.playlist, this.trackModel})
-      : super(key: key);
+  DetailTrack({Key? key, this.playlist, this.trackModel}) : super(key: key);
 
   @override
   _DetailTrackState createState() => _DetailTrackState();
@@ -32,7 +34,7 @@ class _DetailTrackState extends State<DetailTrack> {
 
   @override
   Widget build(BuildContext context) {
-    final spotifybloc = Provider.of<SpotifyProvider>(context, listen: false);
+    final spotifybloc = Provider.of<SpotifyProvider>(context, listen: true);
     Responsive responsive = Responsive(context);
     return Scaffold(
       appBar: AppBar(
@@ -55,17 +57,54 @@ class _DetailTrackState extends State<DetailTrack> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  widget.trackModel!.name!,
-                  style: const TextStyle(color: Colors.white, fontSize: 22),
+                SizedBox(
+                  height: 8,
+                  child: spotifybloc.globalstates == true
+                      ? const LinearProgressIndicator(
+                          color: Colors.white,
+                          backgroundColor: Color(0xff212121),
+                        )
+                      : null,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    widget.trackModel!.name!,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                    ),
+                    maxLines: 1,
+                  ),
                 ),
                 const SizedBox(
                   height: 8,
                 ),
-                Text(
-                  widget.trackModel!.artists![0].name!,
-                  style: TextStyle(
-                      color: Colors.white.withOpacity(0.7), fontSize: 16),
+                GestureDetector(
+                  onTap: () async {
+                    ArtistsModel? resp = await spotifybloc.getArtistSimple(
+                        id: widget.trackModel!.artists![0].id!);
+                    List<TrackArtistModel>? resp2 =
+                        await spotifybloc.getArtistAlbumAndTrack(
+                            id: widget.trackModel!.artists![0].id!);
+                    if (resp != null && resp2 != null && resp2 != []) {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DetailsArtists(
+                                    artistsModel: resp,
+                                    trackList: resp2,
+                                  )));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text('No es posible completar la acción')));
+                    }
+                  },
+                  child: Text(
+                    widget.trackModel!.artists![0].name!,
+                    style: TextStyle(
+                        color: Colors.white.withOpacity(0.7), fontSize: 16),
+                  ),
                 ),
                 const SizedBox(
                   height: 10,

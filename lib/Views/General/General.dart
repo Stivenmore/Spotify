@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
 import 'package:spotify/Views/Home/Home.dart';
 import 'package:spotify/Views/Home/InfoPerson.dart';
@@ -45,59 +46,75 @@ class _GeneralState extends State<General> {
         enable = true;
       });
 
-  Widget buildDrawer() => SafeArea(
-          child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IconButton(
+  Widget buildDrawer(
+          Responsive responsive, AuntenticateBloc auntenticateBloc) =>
+      SafeArea(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IconButton(
                 padding: const EdgeInsets.only(left: 10, top: 15, bottom: 30),
                 onPressed: close,
                 icon: const Icon(
                   Icons.close,
                   color: Colors.white,
                   size: 28,
-                )),
-            DrawerHiddler(
-              onSelectItem: (item) {
-                setState(() {
-                  this.item = item;
-                });
-                close();
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 10, top: 40, bottom: 20),
-              child: TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Cerrar sesión',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16),
                 ),
+                alignment: Alignment.centerLeft,
               ),
-            )
-          ],
-        ),
+              DrawerHiddler(
+                onSelectItem: (item) {
+                  setState(() {
+                    this.item = item;
+                  });
+                  close();
+                },
+              ),
+            ],
+          ),
+          Container(
+            height: responsive.hp(50),
+          ),
+          TextButton(
+            onPressed: () {
+              auntenticateBloc.singOut();
+              Navigator.pushNamedAndRemoveUntil(
+                  context, '/splash', (route) => false);
+            },
+            child: const Text(
+              'Cerrar sesión',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
+          )
+        ],
       ));
 
   @override
   Widget build(BuildContext context) {
+    Responsive responsive = Responsive(context);
+    final auntenticateBloc =
+        Provider.of<AuntenticateBloc>(context, listen: true);
     return Scaffold(
       backgroundColor: Colors.grey[800],
-      body: Stack(
-        children: [
-          buildDrawer(),
-          buildPage(context),
-        ],
+      body: Container(
+        child: Stack(
+          children: [
+            buildDrawer(responsive, auntenticateBloc),
+            buildPage(responsive),
+          ],
+        ),
       ),
     );
   }
 
-  Widget buildPage(BuildContext context) {
-    Responsive responsive = Responsive(context);
+  Widget buildPage(Responsive responsive) {
     return Stack(
       children: [
         AnimatedContainer(

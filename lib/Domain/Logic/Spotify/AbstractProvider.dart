@@ -17,4 +17,11 @@ abstract class AbstractProvider {
   });
 
   Future getSingleTrack({required String id});
+
+  Future getSingleArtist({required String id});
+
+  Future getTopTracksArtist({required String id});
+  
+  Future getSearchTracks({required String q,
+      required int offset});
 }

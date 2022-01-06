@@ -5,8 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
 import 'package:spotify/Domain/Models/Hive/UserModel.dart';
+import 'package:spotify/Domain/Models/Stander/artistModel.dart';
+import 'package:spotify/Domain/Models/Stander/trackArtistModel.dart';
+import 'package:spotify/Domain/Shared/prefs.dart';
 import 'package:spotify/Views/Autentication/Login.dart';
+import 'package:spotify/Views/Home/Details/DetailsArtists.dart';
 import 'package:spotify/Views/Home/Details/DetailsCategoria.dart';
+import 'package:spotify/Views/Home/Details/DetailsPlayList.dart';
+import 'package:spotify/Views/Search/Search.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
 
 class Home extends StatefulWidget {
@@ -19,6 +25,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final _prefs = UserPreferences();
   final box = Hive.box<UserModel>('User');
   final ScrollController scrollController = ScrollController();
   @override
@@ -39,7 +46,7 @@ class _HomeState extends State<Home> {
     final user = box.get(boxkeylast) as UserModel;
     Responsive responsive = Responsive(context);
     final autenticatebloc =
-        Provider.of<AutenticateProvider>(context, listen: true);
+        Provider.of<AuntenticateBloc>(context, listen: true);
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color(0xff212121),
@@ -74,6 +81,13 @@ class _HomeState extends State<Home> {
                           fontSize: 20,
                           fontWeight: FontWeight.bold),
                     ),
+                    actions: [
+                      IconButton(
+                        icon: Icon(Icons.search_outlined),
+                        onPressed: () => showSearch(
+                            context: context, delegate: SearchCourseDelegate()),
+                      ),
+                    ],
                   ),
                   SliverToBoxAdapter(
                     child: IgnorePointer(
@@ -83,9 +97,11 @@ class _HomeState extends State<Home> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Recomendaciones',
-                              style: TextStyle(
+                            Text(
+                              _prefs.locale == 'CO'
+                                  ? 'Recomendaciones'
+                                  : 'Recommendations',
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700),
@@ -101,36 +117,70 @@ class _HomeState extends State<Home> {
                                   scrollDirection: Axis.horizontal,
                                   itemCount: spotifybloc.albumModel.length,
                                   itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 120,
-                                            width: 150,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: FadeInImage.assetNetwork(
-                                                placeholder:
-                                                    'assets/no-image.jpg',
-                                                image: spotifybloc
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        ArtistsModel? resp =
+                                            await spotifybloc.getArtistSimple(
+                                                id: spotifybloc
                                                     .albumModel[index]
-                                                    .images![0]
-                                                    .url!,
-                                                fit: BoxFit.cover,
+                                                    .artists![0]
+                                                    .id!);
+                                        List<TrackArtistModel>? resp2 =
+                                            await spotifybloc
+                                                .getArtistAlbumAndTrack(
+                                                    id: spotifybloc
+                                                        .albumModel[index]
+                                                        .artists![0]
+                                                        .id!);
+                                        if (resp != null &&
+                                            resp2 != null &&
+                                            resp2 != []) {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetailsArtists(
+                                                        artistsModel: resp,
+                                                        trackList: resp2,
+                                                      )));
+                                        } else {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'No es posible completar la acción')));
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 120,
+                                              width: 150,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: FadeInImage.assetNetwork(
+                                                  placeholder:
+                                                      'assets/no-image.jpg',
+                                                  image: spotifybloc
+                                                      .albumModel[index]
+                                                      .images![0]
+                                                      .url!,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Text(
-                                            spotifybloc.albumModel[index]
-                                                .artists![0].name!,
-                                            style: const TextStyle(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400),
-                                          )
-                                        ],
+                                            Text(
+                                              spotifybloc.albumModel[index]
+                                                  .artists![0].name!,
+                                              style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     );
                                   }),
@@ -148,9 +198,11 @@ class _HomeState extends State<Home> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Categorias',
-                              style: TextStyle(
+                            Text(
+                              _prefs.locale == 'CO'
+                                  ? 'Categorias'
+                                  : 'Categories',
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700),
@@ -253,9 +305,11 @@ class _HomeState extends State<Home> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Quizá te pueda gustar',
-                              style: TextStyle(
+                            Text(
+                              _prefs.locale == 'CO'
+                                  ? 'Quizá te pueda gustar'
+                                  : 'Maybe you might like',
+                              style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 22,
                                   fontWeight: FontWeight.w700),
@@ -271,45 +325,76 @@ class _HomeState extends State<Home> {
                                   scrollDirection: Axis.horizontal,
                                   itemCount: spotifybloc.playListModel.length,
                                   itemBuilder: (context, index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            height: 170,
-                                            width: 150,
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              child: FadeInImage.assetNetwork(
-                                                placeholder:
-                                                    'assets/no-image.jpg',
-                                                image: spotifybloc
-                                                    .playListModel[index]
-                                                    .images![0]
-                                                    .url!,
-                                                fit: BoxFit.cover,
+                                    return GestureDetector(
+                                      onTap: () async {
+                                        final resp =
+                                            await spotifybloc.getTrackListOpt(
+                                                playlistID: spotifybloc
+                                                    .playListModel[index].id!);
+                                        if (resp == false) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'No es posible completar la acción')));
+                                        } else {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      DetailsPlayList(
+                                                        onNextPage: () => spotifybloc
+                                                            .getTrackListOpt(
+                                                                playlistID:
+                                                                    spotifybloc
+                                                                        .playListModel[
+                                                                            index]
+                                                                        .id!),
+                                                        playlistModel: spotifybloc
+                                                                .playListModel[
+                                                            index],
+                                                      )));
+                                        }
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 170,
+                                              width: 150,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                child: FadeInImage.assetNetwork(
+                                                  placeholder:
+                                                      'assets/no-image.jpg',
+                                                  image: spotifybloc
+                                                      .playListModel[index]
+                                                      .images![0]
+                                                      .url!,
+                                                  fit: BoxFit.cover,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Text(
-                                            spotifybloc
-                                                .playListModel[index].name!,
-                                            style: TextStyle(
-                                                color: Colors.white
-                                                    .withOpacity(0.3),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400),
-                                          ),
-                                          Text(
-                                            'Originales',
-                                            style: TextStyle(
-                                                color: Colors.white
-                                                    .withOpacity(0.3),
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w400),
-                                          )
-                                        ],
+                                            Text(
+                                              spotifybloc
+                                                  .playListModel[index].name!,
+                                              style: TextStyle(
+                                                  color: Colors.white
+                                                      .withOpacity(0.3),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                            Text(
+                                              'Originales',
+                                              style: TextStyle(
+                                                  color: Colors.white
+                                                      .withOpacity(0.3),
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w400),
+                                            )
+                                          ],
+                                        ),
                                       ),
                                     );
                                   }),

@@ -3,23 +3,35 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:spotify/Domain/Logic/Spotify/AbstractProvider.dart';
 import 'package:spotify/Domain/Models/Stander/albumModel.dart';
+import 'package:spotify/Domain/Models/Stander/artistModel.dart';
 import 'package:spotify/Domain/Models/Stander/categoriesModel.dart';
 import 'package:spotify/Domain/Models/Stander/playlistModel.dart';
+import 'package:spotify/Domain/Models/Stander/searchModelTrack.dart';
+import 'package:spotify/Domain/Models/Stander/trackArtistModel.dart';
 import 'package:spotify/Domain/Models/Stander/tracksModel.dart';
+import 'package:spotify/Domain/Shared/prefs.dart';
+import 'package:spotify/Views/Components/deboucer.dart';
 
 class SpotifyProvider with ChangeNotifier {
   final AbstractProvider abstractProvider;
+  final _prefs = UserPreferences();
 
   SpotifyProvider(this.abstractProvider) {
     getCategoria();
     getRecomendationAlbums();
     getRecomendationPlays();
   }
+  final StreamController<List<SearchModelTrack>> _suggestionStreamContoller =
+      StreamController.broadcast();
+  Stream<List<SearchModelTrack>> get suggestionStream =>
+      _suggestionStreamContoller.stream;
+
   ///
   bool globalstate = false;
   bool get globalstates => globalstate;
   int errornumber = 0;
   int get errornumbers => errornumber;
+
   ///
 
   //Screen Principal
@@ -35,8 +47,10 @@ class SpotifyProvider with ChangeNotifier {
   int offsetOptPlayReco = 0;
   List<TrackModel> trackListOptModel = [];
   int offsetOptTrack = 0;
-  ///
+  List<SearchModelTrack> model = [];
 
+  ///
+  final debouncer = Debouncer(duration: Duration(milliseconds: 500));
   //Funtions
   void funcionprogress() {
     globalstate = true;
@@ -47,15 +61,17 @@ class SpotifyProvider with ChangeNotifier {
     globalstate = false;
     notifyListeners();
   }
+
   ///
-  
+
   ///Errors
   void pluserror() {
     errornumber++;
     notifyListeners();
   }
+
   ///
-  
+
   /// Clear
   void clearerror() {
     errornumber = 0;
@@ -73,13 +89,16 @@ class SpotifyProvider with ChangeNotifier {
     trackListOptModel = [];
     notifyListeners();
   }
+
   ///
 
   Future getCategoria() async {
     try {
       List<CategoriesModel> auxiliar;
       final resp = await abstractProvider.getCategories(
-          locale: 'sv_SE', country: 'AU', offset: offsetCategoriaReco++);
+          locale: 'sv_SE',
+          country: _prefs.locale,
+          offset: offsetCategoriaReco++);
       List items = resp["categories"]["items"];
       if (resp != null && items != []) {
         auxiliar = (resp["categories"]["items"] as Iterable)
@@ -130,7 +149,7 @@ class SpotifyProvider with ChangeNotifier {
     try {
       List<PlaylistModel> auxiliar;
       final resp = await abstractProvider.getrecomenPlays(
-          categoryID: 'rock', country: 'AU', offset: offsetPlayReco++);
+          categoryID: 'rock', country: _prefs.locale, offset: offsetPlayReco++);
       List items = resp["playlists"]["items"];
       if (resp != null && items != []) {
         auxiliar = (resp["playlists"]["items"] as Iterable)
@@ -159,7 +178,9 @@ class SpotifyProvider with ChangeNotifier {
       funcionprogress();
       List<PlaylistModel> auxiliar;
       final resp = await abstractProvider.getrecomenPlays(
-          categoryID: categoryID, country: 'AU', offset: offsetOptPlayReco++);
+          categoryID: categoryID,
+          country: _prefs.locale,
+          offset: offsetOptPlayReco++);
       List? items = resp["playlists"]["items"];
       if (resp != null && items != []) {
         auxiliar = (resp["playlists"]["items"] as Iterable)
@@ -205,11 +226,93 @@ class SpotifyProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
+      funcionstop();
       pluserror();
       if (kDebugMode) {
         print(e);
       }
       return false;
     }
+  }
+
+  Future<ArtistsModel?> getArtistSimple({required String id}) async {
+    try {
+      funcionprogress();
+      final resp = await abstractProvider.getSingleArtist(id: id);
+      if (resp != null) {
+        ArtistsModel artisListOptModel = ArtistsModel.fromJson(resp);
+        notifyListeners();
+        funcionstop();
+        return artisListOptModel;
+      } else {
+        funcionstop();
+        return null;
+      }
+    } catch (e) {
+      funcionstop();
+      return null;
+    }
+  }
+
+  Future<List<TrackArtistModel>?> getArtistAlbumAndTrack(
+      {required String id}) async {
+    try {
+      funcionprogress();
+      final resp = await abstractProvider.getTopTracksArtist(id: id);
+      if (resp != null) {
+        List<TrackArtistModel> model = (resp["tracks"] as Iterable)
+            .map((e) => TrackArtistModel.fromJson(e))
+            .toList();
+        notifyListeners();
+        funcionstop();
+        return model;
+      } else {
+        funcionstop();
+        return null;
+      }
+    } catch (e) {
+      funcionstop();
+      pluserror();
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  Future getSearchTracks({required String q}) async {
+    try {
+      final resp = await abstractProvider.getSearchTracks(q: q, offset: 0);
+      if (resp != null && resp["tracks"]["items"] != null) {
+        model = (resp["tracks"]["items"] as Iterable)
+            .map((e) => SearchModelTrack.fromJson(e))
+            .toList();
+        notifyListeners();
+        return model;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      pluserror();
+      if (kDebugMode) {
+        print(e);
+      }
+      return null;
+    }
+  }
+
+  void getStreamSearch(String searT) {
+    debouncer.value = '';
+    debouncer.onValue = (value) async {
+      // print('Tenemos valor a buscar: $value');
+      final results = await getSearchTracks(q: value);
+      this._suggestionStreamContoller.add(results);
+    };
+
+    final timer = Timer.periodic(Duration(milliseconds: 300), (_) {
+      debouncer.value = searT;
+    });
+
+    Future.delayed(Duration(milliseconds: 301)).then((_) => timer.cancel());
   }
 }
