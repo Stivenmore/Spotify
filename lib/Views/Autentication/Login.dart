@@ -41,7 +41,7 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    final autenticatebloc = Provider.of<AutenticateProvider>(context);
+    final autenticatebloc = Provider.of<AuntenticateBloc>(context);
     final spotifybloc = Provider.of<SpotifyProvider>(context);
     Responsive responsive = Responsive(context);
     return SafeArea(

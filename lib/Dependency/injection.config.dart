@@ -11,8 +11,8 @@ void $initGetIt({required String environment}) {
   getIt
     ..registerFactory<AuthReposotory>(() => AuthReposotory())
     ..registerFactory<SpotifyRepository>(() => SpotifyRepository())
-    ..registerFactory<AutenticateProvider>(
-        () => AutenticateProvider(getIt<AbstractAutenticate>()))
+    ..registerFactory<AuntenticateBloc>(
+        () => AuntenticateBloc(getIt<AbstractAutenticate>()))
     ..registerFactory<SpotifyProvider>(
         () => SpotifyProvider(getIt<AbstractProvider>()));
 

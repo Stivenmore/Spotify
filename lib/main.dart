@@ -48,8 +48,7 @@ class _StatState extends State<Stat> {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            create: (context) => getIt<AutenticateProvider>()),
+        ChangeNotifierProvider(create: (context) => getIt<AuntenticateBloc>()),
         ChangeNotifierProvider(create: (context) => getIt<SpotifyProvider>())
       ],
       child: const MyApp(),
