@@ -15,4 +15,6 @@ abstract class AbstractProvider {
     required String playlistID,
     required int offset,
   });
+
+  Future getSingleTrack({required String id});
 }
