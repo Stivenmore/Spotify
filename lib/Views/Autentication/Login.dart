@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:rounded_loading_button/rounded_loading_button.dart';
 import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
+import 'package:spotify/Domain/Shared/prefs.dart';
 import 'package:spotify/Views/General/General.dart';
 import 'package:spotify/Views/Home/Home.dart';
 import 'package:spotify/Views/Utils/Responsive/responsive.dart';
@@ -23,6 +24,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final RoundedLoadingButtonController controller =
       RoundedLoadingButtonController();
+  final _prefs = UserPreferences();
   bool obstru = false;
   bool isloading = false;
   final validate = LoginValidate();
@@ -74,7 +76,7 @@ class _LoginState extends State<Login> {
                     height: 20,
                   ),
                   Text(
-                    ' Hola!',
+                    _prefs.locale == 'CO' ? ' Hola!' : ' Hello!',
                     style: TextStyle(
                         color: Colors.purple,
                         fontSize: 58,
@@ -117,7 +119,9 @@ class _LoginState extends State<Login> {
                                       borderSide:
                                           BorderSide(color: Colors.white),
                                       borderRadius: BorderRadius.circular(16)),
-                                  hintText: 'Escribe tu correo',
+                                  hintText: _prefs.locale == 'CO'
+                                      ? 'Escribe tu correo'
+                                      : 'Email',
                                   hintStyle: TextStyle(color: Colors.grey[400]),
                                   errorStyle: TextStyle(color: Colors.red),
                                   errorText: snapshot.error as String?),
@@ -172,7 +176,9 @@ class _LoginState extends State<Login> {
                                       borderSide:
                                           BorderSide(color: Colors.white),
                                       borderRadius: BorderRadius.circular(16)),
-                                  hintText: 'Escribe tu contraseña',
+                                  hintText: _prefs.locale == 'CO'
+                                      ? 'Escribe tu contraseña'
+                                      : 'Password',
                                   hintStyle: TextStyle(color: Colors.grey[400]),
                                   errorStyle: TextStyle(color: Colors.red),
                                   errorMaxLines: 2,
@@ -251,7 +257,9 @@ class _LoginState extends State<Login> {
                                 height: 60,
                                 child: Center(
                                   child: Text(
-                                    'Iniciar Sesíon',
+                                    _prefs.locale == 'CO'
+                                        ? 'Iniciar Sesion'
+                                        : 'Sign In',
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize: 18,
@@ -268,7 +276,9 @@ class _LoginState extends State<Login> {
                     height: 20,
                   ),
                   Text(
-                    '------ O continua con ------',
+                    _prefs.locale == 'CO'
+                        ? '------ O continua con ------'
+                        : '------ Or continue with ------',
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(

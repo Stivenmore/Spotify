@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:spotify/Domain/Bloc/AutenticateBloc.dart';
 import 'package:spotify/Domain/Bloc/SpotifyBloc.dart';
+import 'package:spotify/Domain/Shared/prefs.dart';
 import 'package:spotify/Views/Home/Home.dart';
 import 'package:spotify/Views/Home/InfoPerson.dart';
 import 'package:spotify/Views/Utils/Animations/Drawer/DrawerClass.dart';
@@ -17,6 +18,7 @@ class General extends StatefulWidget {
 }
 
 class _GeneralState extends State<General> {
+  final _prefs = UserPreferences();
   double xOffset = 0;
   double xx0ffset = 0;
   double yOffset = 0;
@@ -85,9 +87,9 @@ class _GeneralState extends State<General> {
               Navigator.pushNamedAndRemoveUntil(
                   context, '/splash', (route) => false);
             },
-            child: const Text(
-              'Cerrar sesión',
-              style: TextStyle(
+            child: Text(
+              _prefs.locale == 'CO' ? 'Cerrar sesion' : 'Exit',
+              style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
                   fontSize: 16),

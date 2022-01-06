@@ -75,7 +75,7 @@ class _HomeState extends State<Home> {
                         )),
                     centerTitle: true,
                     title: Text(
-                      '¡Hola ${user.name}!',
+                     _prefs.locale == 'CO'? '¡Hola ${user.name}!' : '¡Hello ${user.name}!',
                       style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
