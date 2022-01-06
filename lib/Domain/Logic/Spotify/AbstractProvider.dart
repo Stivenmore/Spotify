@@ -22,4 +22,6 @@ abstract class AbstractProvider {
 
   Future getTopTracksArtist({required String id});
   
+  Future getSearchTracks({required String q,
+      required int offset});
 }

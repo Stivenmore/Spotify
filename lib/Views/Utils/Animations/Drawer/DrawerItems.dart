@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 import 'package:spotify/Views/Utils/Animations/Drawer/DrawerClass.dart';
 
