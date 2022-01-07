@@ -22,7 +22,7 @@ Utilizado para guardar token y preferencias de usuario, entre estas poder altera
 
 ## Exoplayer
 
-Usado en este caso para poder reproducir las URL previws entregadas por la API SPOTIFY
+Usado en este caso para poder reproducir las URL previws entregadas por la API SPOTIFY, estas funcionan en background y con el movil bloqueado.
 PLUS A AGREGAR: En estos casos trabajar con ISOLATES, puede ayudar mucho en el performance, por falta de tiempo no lo he implementado.
 
 ## GetIt e Inyector
@@ -37,7 +37,7 @@ se implementaron animaciones teniendo como principio Transform, Transition, Anim
 
 Se usa este servicio de google en la nube para login con Google, Facebook y correo mas contraseña, registro de igual modo.
 
-#SPOTIFY APP
+# SPOTIFY APP
 
  |  <img src="https://firebasestorage.googleapis.com/v0/b/spotify-ceae1.appspot.com/o/7.jpeg?alt=media&token=c37b3308-9263-47a9-a426-f12d2c79e142" width="250"> |
  
